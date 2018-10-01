@@ -24,6 +24,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     bool operacion; //si es false, es de binario a decimal, true es lo contrario
+    bool validarBin(Expression *ex);
+    bool validarDec(Expression *ex);
 };
 
 #endif // MAINWINDOW_H

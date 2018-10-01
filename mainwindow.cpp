@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include <sstream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -41,20 +42,59 @@ void MainWindow::on_btnConvertir_clicked()
     if(ui->txfEntrada->text() != "")
     {
         Expression *ex = new Expression(ui->txfEntrada->text().toStdString());
+
         if(!operacion)
         {
-            double result = ex->convertToDec();
-            ui->txfSalida->setText(QString::number(result));
-        }
+            if(validarBin(ex))
+            {
+                stringstream ss;
+                string res;
+                long double result = ex->convertToDec();
+                ss << result;
+                ss >> res;
+                ui->txfSalida->setText(QString::fromStdString(res));
+            }
+            else
+                QMessageBox::information(this, tr("Error"), tr("Este numero no es binario"));
+        }/*if operacion*/
         else
         {
-            string result = ex->convertToBin(ui->sbxBitsPrecision->value());
-            ui->txfSalida->setText(QString::fromStdString(result));
-
+            if(validarDec(ex))
+            {
+                string result = ex->convertToBin(ui->sbxBitsPrecision->value());
+                ui->txfSalida->setText(QString::fromStdString(result));
+            }
+            else
+                QMessageBox::information(this, tr("Error"), tr("Ese dato no es un numero"));
         }
-    }
+    }/*if*/
     else
-    {
         QMessageBox::information(this, tr("Error"), tr("Tiene que ingresar un numero"));
-    }
+}
+
+bool MainWindow::validarBin(Expression *ex)
+{
+    DobleNode<int>* aux = ex->getComa()->getPrev();
+    for(;aux; aux = aux->getPrev())
+        if(aux->getDato() != 1 && aux->getDato() != 0)
+            return false;
+    aux = ex->getComa()->getNext();
+    for(;aux; aux = aux->getNext())
+        if(aux->getDato() != 1 && aux->getDato() != 0)
+            return false;
+    return true;
+}
+
+
+bool MainWindow::validarDec(Expression *ex)
+{
+    DobleNode<int>* aux = ex->getComa()->getPrev();
+    for(;aux; aux = aux->getPrev())
+        if(aux->getDato() > 9 || aux->getDato() < 0)
+            return false;
+    aux = ex->getComa()->getNext();
+    for(;aux; aux = aux->getNext())
+        if(aux->getDato() > 9 || aux->getDato() < 0)
+            return false;
+    return true;
 }

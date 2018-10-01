@@ -25,9 +25,9 @@ void Expression::PosicionarComa()
 }
 
 /*metodo de conversion a decimal*/
-double Expression::convertToDec()
+long double Expression::convertToDec()
 {
-    double sum = 0;
+    long double sum = 0;
     DobleNode<int> *aux;
     aux = coma->getPrev();
     int pot = 0;
@@ -129,5 +129,15 @@ double Expression::getFract()
         pot--;
         aux = aux->getNext();
     }
+}
+
+DobleList<int>* Expression::getDigitos()
+{
+    return digitos;
+}
+
+DobleNode<int>* Expression::getComa()
+{
+    return coma;
 }
 

@@ -14,14 +14,16 @@ class Expression
 public:
     Expression(string expresion);
     void PosicionarComa();
-    double convertToDec();
+    long double convertToDec();
     string convertToBin(int bitsPrecision);
     string binToString(DobleList<char>* list);
     int getEntire();
     double getFract();
-    DobleList<int>* digitos;
+    DobleList<int>* getDigitos();
+    DobleNode<int>* getComa();
 private:
-    DobleNode<int>* coma; //puntero al nodo que contendra el separador de la parte entera de la fraccionaria
+    DobleNode<int>* coma = 0; //puntero al nodo que contendra el separador de la parte entera de la fraccionaria
+    DobleList<int>* digitos;
 
 };
 
