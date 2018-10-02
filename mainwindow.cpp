@@ -47,12 +47,17 @@ void MainWindow::on_btnConvertir_clicked()
         {
             if(validarBin(ex))
             {
-                stringstream ss;
-                string res;
-                long double result = ex->convertToDec();
-                ss << result;
-                ss >> res;
-                ui->txfSalida->setText(QString::fromStdString(res));
+                if(validarFracBin(ex))
+                {
+                    stringstream ss;
+                    string res;
+                    long double result = ex->convertToDec();
+                    ss << result;
+                    ss >> res;
+                    ui->txfSalida->setText(QString::fromStdString(res));
+                }
+                else
+                    QMessageBox::information(this, tr("Error"), tr("Contiene más de 4 digitos fraccionarios\nesto puede generar fallas de precision."));
             }
             else
                 QMessageBox::information(this, tr("Error"), tr("Este numero no es binario"));
@@ -62,6 +67,8 @@ void MainWindow::on_btnConvertir_clicked()
             if(validarDec(ex))
             {
                 string result = ex->convertToBin(ui->sbxBitsPrecision->value());
+                if(ui->sbxBitsPrecision->value() == 0) /*verificacion si la cantidad de bits de precision es 0*/
+                    result.pop_back();
                 ui->txfSalida->setText(QString::fromStdString(result));
             }
             else
@@ -97,4 +104,16 @@ bool MainWindow::validarDec(Expression *ex)
         if(aux->getDato() > 9 || aux->getDato() < 0)
             return false;
     return true;
+}
+
+bool MainWindow::validarFracBin(Expression *ex)
+{
+    int cont = 0;
+    DobleNode<int>* aux = ex->getComa()->getNext();
+    while(aux)
+    {
+        cont++;
+        aux = aux->getNext();
+    }
+    return cont <= 4;
 }
